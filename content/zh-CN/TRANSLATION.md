@@ -15,10 +15,13 @@
 
 - `workshops/2025-05/walkthrough.md` 的并行译本 `workshops/2025-05/walkthrough.zh-CN.md`
 
+第三阶段翻译：
+
+- `workshops/2025-05/sections/**/README.md` 的并行译本 `README.zh-CN.md`
+
 暂不翻译：
 
 - `workshops/**/walkthrough.yaml`
-- `workshops/**/sections/**`
 - `workshops/2025-05-17/**`
 - `workshops/2025-07-16/**`
 - `packages/**`
@@ -53,3 +56,4 @@
 
 - 第一阶段核心内容：`d20c728`
 - 第二阶段 TypeScript workshop walkthrough：`b80256d`
+- 第三阶段 TypeScript workshop section READMEs：`58b8f09`
