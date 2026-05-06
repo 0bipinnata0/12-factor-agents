@@ -35,10 +35,15 @@
 
 - `workshops/2025-05-17/walkthrough.md` 的并行译本 `workshops/2025-05-17/walkthrough.zh-CN.md`
 
+第八阶段翻译：
+
+- `workshops/2025-07-16/walkthrough_python_enhanced.yaml` 的并行译本 `walkthrough_python_enhanced.zh-CN.yaml`
+- `workshops/2025-07-16/workshop_final.ipynb` 的并行译本 `workshop_final.zh-CN.ipynb`
+
 暂不翻译：
 
 - `workshops/**/walkthrough.yaml`
-- `workshops/2025-07-16/**`
+- `workshops/2025-07-16/**` 下除已列出的 Python notebook 教程源和生成 notebook 译本以外的代码、测试说明和辅助文件
 - `packages/**` 下除已列出的 README 译本以外的代码、模板和辅助文档
 - `content/factor-1-*.md` 到 `content/factor-9-*.md` 这些旧文件名跳转页
 - `img/**` 图片本体
@@ -79,3 +84,4 @@
 - 第五阶段 walkthroughgen README：`13e38f0`
 - 第六阶段 2025-05-17 workshop section READMEs：`c62d647`
 - 第七阶段 2025-05-17 workshop walkthrough：`ca5958c`
+- 第八阶段 2025-07-16 Python/Jupyter notebook：`aa05c33`

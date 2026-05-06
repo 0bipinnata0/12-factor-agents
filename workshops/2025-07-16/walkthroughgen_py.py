@@ -9,10 +9,18 @@ import sys
 from pathlib import Path
 import argparse
 
-def create_baml_setup_cells(nb):
+def create_baml_setup_cells(nb, locale="en"):
     """Add BAML setup cells with explanation."""
     # Add explanation markdown
-    explanation = """### BAML Setup
+    if locale == "zh-CN":
+        explanation = """### BAML 设置
+
+先不用太担心这段设置代码，后面会逐步解释。现在只需要知道：
+- BAML 是一个用于处理语言模型的工具
+- 我们需要一些特殊设置，让它在 Google Colab 中顺畅运行
+- 后续会用 `get_baml_client()` 函数和 AI 模型交互"""
+    else:
+        explanation = """### BAML Setup
 
 Don't worry too much about this setup code - it will make sense later! For now, just know that:
 - BAML is a tool for working with language models
@@ -84,7 +92,7 @@ def get_baml_client():
     nb.cells.append(new_code_cell(init_code))
     
 
-def process_step(nb, step, base_path, current_functions, section_name=None):
+def process_step(nb, step, base_path, current_functions, section_name=None, locale="en"):
     """Process different step types."""
     if 'text' in step:
         # Add markdown cell
@@ -92,7 +100,7 @@ def process_step(nb, step, base_path, current_functions, section_name=None):
     
     if 'baml_setup' in step:
         # Add BAML setup cells
-        create_baml_setup_cells(nb)
+        create_baml_setup_cells(nb, locale)
     
     if 'file' in step:
         src = step['file']['src']
@@ -187,6 +195,7 @@ def convert_walkthrough_to_notebook(yaml_path, output_path):
     # Process sections
     base_path = Path(yaml_path).parent
     current_functions = {}
+    locale = walkthrough.get('locale', 'en')
     
     for section in walkthrough.get('sections', []):
         # Add section title
@@ -200,7 +209,7 @@ def convert_walkthrough_to_notebook(yaml_path, output_path):
         
         # Process steps
         for step in section.get('steps', []):
-            process_step(nb, step, base_path, current_functions, section_name)
+            process_step(nb, step, base_path, current_functions, section_name, locale)
     
     # Write notebook
     with open(output_path, 'w') as f:

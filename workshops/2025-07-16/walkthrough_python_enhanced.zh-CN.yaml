@@ -1,0 +1,464 @@
+title: 用 Python 从零构建 12-factor agent 模板
+text: |-
+  本教程会从一个空的 Python 仓库开始，一步步构建出一个 12-factor agent。你将使用 BAML 创建一个遵循 12-factor 方法论的 Python agent。
+
+  中文翻译：由 0bipinnata0 翻译 / 改编自原项目对应英文 notebook 教程源。内容与图片遵循 CC BY-SA 4.0；代码遵循 Apache 2.0。原文：`workshops/2025-07-16/walkthrough_python_enhanced.yaml`，基准提交：`aa05c33`。
+targets:
+- ipynb: ./build/workshop-2025-07-16.zh-CN.ipynb
+sections:
+- name: hello-world
+  title: 第 0 章：Hello World
+  text: 先从基础 Python 设置和一个 hello world 程序开始。
+  steps:
+  - text: |
+      本指南会带你用 Python 和 BAML 构建 agents。
+
+      我们会从简单的 hello world 程序开始，然后逐步构建到完整的 agent。
+
+      对于这个 notebook，你需要先把 OpenAI API key 保存到 Google Colab secrets 中。
+
+      ## 我们要走向哪里
+
+      在开始之前，先了解这段旅程的目标。我们会逐步构建 **deterministic DAG 中的 micro-agents**，这是一种把 AI 的灵活性和传统软件可靠性结合起来的强大模式。
+
+      📖 **了解更多**：[软件简史](../../content/zh-CN/brief-history-of-software.md)
+
+      ![Software DAG Evolution](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/010-software-dag.png)
+  - text: 这是一个简单的 hello world 程序：
+  - file:
+      src: ./walkthrough/00-main.py
+  - text: 运行它，验证是否正常工作：
+  - run_main:
+      regenerate_baml: false
+- name: cli-and-agent
+  title: 第 1 章：CLI 和 Agent Loop
+  text: 现在加入 BAML，并创建第一个带 CLI 接口的 agent。
+  steps:
+  - text: |
+      本章会集成 BAML，创建一个可以响应用户输入的 AI agent。
+
+      ## BAML 是什么？
+
+      BAML（Boundary Markup Language）是一种领域专用语言，用于帮助开发者构建可靠的 AI 工作流和 agents。BAML 由 [BoundaryML](https://www.boundaryml.com/)（Y Combinator W23 公司）创建，把工程能力带入 prompt engineering。
+
+      ### 为什么使用 BAML？
+
+      - **类型安全输出**：即使在 streaming 时，也能从 LLM 得到完整类型安全的输出
+      - **语言无关**：支持 Python、TypeScript、Ruby、Go 等语言
+      - **LLM 无关**：支持任意 LLM provider（OpenAI、Anthropic 等）
+      - **更好性能**：最先进的结构化输出能力，甚至优于 OpenAI 原生 function calling
+      - **开发者友好**：原生 VSCode 扩展提供语法高亮、自动补全和交互式 playground
+
+      ### 了解更多
+
+      - 📚 [官方文档](https://docs.boundaryml.com/home)
+      - 💻 [GitHub 仓库](https://github.com/BoundaryML/baml)
+      - 🎯 [What is BAML?](https://docs.boundaryml.com/guide/introduction/what-is-baml)
+      - 📖 [BAML 示例](https://github.com/BoundaryML/baml-examples)
+      - 🏢 [公司网站](https://www.boundaryml.com/)
+      - 📰 [Blog: AI Agents Need a New Syntax](https://www.boundaryml.com/blog/ai-agents-need-new-syntax)
+
+      BAML 会把 prompt engineering 转化为 schema engineering，让你专注于定义数据结构，而不是和 prompt 反复拉扯。这种方式能带来更可靠、更易维护的 AI 应用。
+
+      ### 关于开发体验
+
+      BAML 配合官方 VS Code 扩展体验会好很多，扩展提供语法高亮、自动补全、内联测试和交互式 playground。不过在这个 notebook 教程里，我们会直接使用 BAML 文件，不依赖增强 IDE 功能。
+
+      ## Factor 1：自然语言到工具调用
+
+      我们正在构建的是 12-factor agents 的第一个 factor：把自然语言转换为结构化工具调用。
+
+      📖 **了解更多**：[Factor 1：自然语言到工具调用](../../content/zh-CN/factor-01-natural-language-to-tool-calls.md)
+
+      ![Natural Language to Tool Calls](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/110-natural-language-tool-calls.png)
+
+      首先，在 notebook 中设置 BAML 支持。
+  - baml_setup: true
+  - text: |
+      现在创建会使用 BAML 处理用户输入的 agent。
+
+      首先，定义核心 agent 逻辑：
+  - file:
+      src: ./walkthrough/01-agent.py
+  - text: |
+      接下来，需要定义 agent 会使用的 BAML function。
+
+      ### 理解 BAML 语法
+
+      BAML 文件会定义：
+      - **Classes**：结构化输出 schema（例如下面的 `DoneForNow`）
+      - **Functions**：由 AI 驱动的函数，接收输入并返回结构化输出
+      - **Tests**：用于验证 prompts 的示例输入 / 输出
+
+      这个 BAML 文件定义了 agent 能做什么：
+  - fetch_file:
+      src: ./walkthrough/01-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      现在创建一个接收 message 参数的 main 函数：
+  - file:
+      src: ./walkthrough/01-main.py
+  - text: |
+      测试一下 agent。你可以试着用不同消息调用 main()：
+      - `main("What's the weather like?")`
+      - `main("Tell me a joke")`
+      - `main("How are you doing today?")`
+  - run_main:
+      regenerate_baml: true
+      args: Hello from the Python notebook!
+- name: calculator-tools
+  title: 第 2 章：添加计算器工具
+  text: 给我们的 agent 添加一些计算器工具。
+  steps:
+  - text: |
+      先为计算器添加工具定义。
+
+      这些只是简单的结构化输出，我们会要求模型在 agentic loop 中把它们作为“下一步”返回。
+
+      ## Factor 4：工具就是结构化输出
+
+      本章会展示：工具只是 LLM 返回的结构化 JSON 输出，并没有更复杂。
+
+      📖 **了解更多**：[Factor 4：工具就是结构化输出](../../content/zh-CN/factor-04-tools-are-structured-outputs.md)
+
+      ![Tools Are Structured Outputs](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/140-tools-are-just-structured-outputs.png)
+  - fetch_file:
+      src: ./walkthrough/02-tool_calculator.baml
+      dest: baml_src/tool_calculator.baml
+  - text: |
+      现在更新 agent 的 `DetermineNextStep` 方法，把计算器工具暴露为潜在的下一步。
+  - fetch_file:
+      src: ./walkthrough/02-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      现在更新 main 函数，让它展示工具调用：
+  - file:
+      src: ./walkthrough/02-main.py
+  - text: |
+      试用计算器。agent 应该能识别出你想执行计算，并返回对应的工具调用，而不是只返回一条消息。
+  - run_main:
+      regenerate_baml: true
+      args: can you add 3 and 4
+- name: tool-loop
+  title: 第 3 章：在循环中处理工具调用
+  text: 现在添加一个真正的 agentic loop，让它能够运行工具，并从 LLM 得到最终答案。
+  steps:
+  - text: |
+      本章会增强 agent，让它能在循环中处理工具调用。这意味着：
+      - agent 可以按顺序调用多个工具
+      - 每个工具结果都会反馈回 agent
+      - agent 会持续运行，直到得到最终答案
+
+      ## Agent Loop 模式
+
+      我们正在实现核心 agent loop：AI 做决策、执行工具，并持续运行直到完成。
+
+      ![Agent Loop Animation](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/027-agent-loop-animation.gif)
+
+      ## Factor 5：统一执行状态
+
+      注意我们把所有内容都作为事件存储在 Thread 中，这正是 Factor 5 的实践。
+
+      📖 **了解更多**：[Factor 5：统一执行状态](../../content/zh-CN/factor-05-unify-execution-state.md)
+
+      ![Unify State Animation](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/155-unify-state-animation.gif)
+
+      更新 agent，让它正确处理工具调用：
+  - file:
+      src: ./walkthrough/03-agent.py
+  - text: |
+      现在更新 main 函数，让它使用新的 agent loop：
+  - file:
+      src: ./walkthrough/03-main.py
+  - text: |
+      试一下。agent 现在应该会调用工具，并返回计算结果：
+  - run_main:
+      regenerate_baml: true
+      args: can you add 3 and 4
+  - text: |
+      你应该会看到 agent：
+      1. 识别出需要使用 add 工具
+      2. 用正确参数调用工具
+      3. 得到结果（7）
+      4. 生成包含该结果的最终响应
+
+      对于更复杂的计算，我们需要处理所有计算器操作。接下来添加 subtract、multiply 和 divide 支持：
+  - file:
+      src: ./walkthrough/03b-agent.py
+  - text: |
+      现在测试减法：
+  - run_main:
+      regenerate_baml: false
+      args: can you subtract 3 from 4
+  - text: |
+      测试乘法：
+  - run_main:
+      regenerate_baml: false
+      args: can you multiply 3 and 4
+  - text: |
+      最后，测试一个复杂的多步骤计算：
+  - run_main:
+      regenerate_baml: false
+      args: can you multiply 3 and 4, then divide the result by 2 and then add 12 to that result
+  - text: |
+      恭喜，你已经迈出了手写 agent loop 的第一步。
+
+      你已经学到的关键概念：
+      - **Thread Management**：追踪对话历史和工具调用
+      - **Tool Execution**：处理不同工具类型并返回结果
+      - **Agent Loop**：持续运行，直到 agent 得到最终答案
+
+      从这里开始，我们会逐步加入一些更中级和更高级的 12-factor agents 概念。
+- name: baml-tests
+  title: 第 4 章：给 agent.baml 添加测试
+  text: 给 BAML agent 添加一些测试。
+  steps:
+  - text: |
+      本章会学习 BAML testing，这是一个强大的能力，可以帮助确保 agents 行为正确。
+
+      ## 为什么测试 BAML Functions？
+
+      - **捕获回归**：确保改动不会破坏已有行为
+      - **记录行为**：测试可以作为活文档
+      - **验证边界情况**：测试复杂场景和对话流
+      - **CI/CD 集成**：在 pipeline 中自动运行测试
+
+      ## Factor 2：掌控你的提示词
+
+      测试是掌控 prompts 的关键部分，你需要验证它们按预期工作。
+
+      📖 **了解更多**：[Factor 2：掌控你的提示词](../../content/zh-CN/factor-02-own-your-prompts.md)
+
+      ![Own Your Prompts](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/120-own-your-prompts.png)
+
+      先从一个简单测试开始，检查 agent 处理基础交互的能力：
+  - fetch_file:
+      src: ./walkthrough/04-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      运行测试，看看效果：
+  - command: '!baml-cli test'
+  - text: |
+      现在用 assertions 改进测试。Assertions 可以验证 agent 输出中的特定属性。
+
+      ## BAML Assertion 语法
+
+      Assertions 使用 `@@assert` 指令：
+      ```
+      @@assert(name, {{condition}})
+      ```
+
+      - `name`：assertion 的描述性名称
+      - `condition`：使用 `this` 访问输出的布尔表达式
+  - fetch_file:
+      src: ./walkthrough/04b-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      再次运行测试，查看 assertions 的效果：
+  - command: '!baml-cli test'
+  - text: |
+      最后，添加更复杂的测试用例，用来测试多步骤对话。
+
+      这些测试会模拟完整对话流，包括：
+      - 用户输入
+      - agent 发起的工具调用
+      - 工具响应
+      - agent 的最终响应
+  - fetch_file:
+      src: ./walkthrough/04c-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      运行完整测试套件：
+  - command: '!baml-cli test'
+  - text: |
+      ## 关键测试概念
+
+      1. **Test Structure**：每个测试指定 functions、arguments 和 assertions
+      2. **Progressive Testing**：从简单测试开始，再测试复杂场景
+      3. **Conversation History**：测试 agent 如何处理多轮对话
+      4. **Tool Integration**：验证 agent 是否按顺序正确使用工具
+
+      有了这些测试，你就可以更放心地修改 agent，因为核心功能已经被自动化测试保护起来。
+- name: human-tools
+  title: 第 5 章：多个人类工具
+  text: |
+    本节会添加对多个人类工具的支持，它们用于联系人类。
+  steps:
+  - text: |
+      到目前为止，agent 只会用 `done_for_now` 返回最终答案。但如果 agent 需要澄清信息怎么办？
+
+      我们来添加一个新工具，让 agent 可以向用户请求更多信息。
+
+      ## 为什么需要 Human-in-the-Loop？
+
+      - **处理模糊输入**：当用户输入不清楚或包含 typo 时
+      - **请求缺失信息**：当 agent 需要更多上下文时
+      - **确认敏感操作**：在执行重要动作之前
+      - **交互式工作流**：构建能与用户互动的对话式 agents
+
+      ## Factor 7：用工具调用联系人类
+
+      这是一个关键模式：把人类交互也当成一次工具调用。
+
+      📖 **了解更多**：[Factor 7：用工具调用联系人类](../../content/zh-CN/factor-07-contact-humans-with-tools.md)
+
+      ![Contact Humans with Tools](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/170-contact-humans-with-tools.png)
+
+      这会支持 **outer-loop agents**：agent 可以暂停执行，等待人类输入。
+
+      ![Outer Loop Agents](https://raw.githubusercontent.com/humanlayer/12-factor-agents/main/img/175-outer-loop-agents.png)
+
+      首先，更新 BAML 文件，加入 ClarificationRequest 工具：
+  - fetch_file:
+      src: ./walkthrough/05-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      现在更新 agent，让它处理澄清请求：
+  - file:
+      src: ./walkthrough/05-agent.py
+  - text: |
+      最后，创建一个处理人类交互的 main 函数：
+  - file:
+      src: ./walkthrough/05-main.py
+  - text: |
+      用一个应该触发澄清请求的模糊输入测试：
+  - run_main:
+      regenerate_baml: true
+      args: can you multiply 3 and FD*(#F&&
+  - text: |
+      你应该会看到：
+      1. agent 识别出输入不清楚
+      2. 它请求澄清
+      3. 在 Colab 中，你会看到一个可输入响应的提示
+      4. 在本地测试中，会自动提供响应
+      5. agent 使用澄清后的输入继续执行
+
+      ## 在 Colab 中交互式测试
+
+      在 Google Colab 中运行时，`input()` 函数会创建一个交互式文本框，让你输入响应。可以尝试不同澄清内容，观察 agent 如何适应。
+
+      ## 关键概念
+
+      - **Human Tools**：把控制权交还给人类的特殊工具类型
+      - **Conversation Flow**：agent 可以暂停执行以获取人类输入
+      - **Context Preservation**：完整对话历史会被保留
+      - **Flexible Handling**：针对不同环境采用不同行为
+- name: customize-prompt
+  title: 第 6 章：用推理自定义提示词
+  text: |
+    本节会探索如何用 reasoning steps 自定义 agent 的 prompt。
+
+    这是 [factor 2：掌控你的提示词](../../content/zh-CN/factor-02-own-your-prompts.md) 的核心。
+  steps:
+  - text: |
+      ## 为什么给 Prompt 添加 Reasoning？
+
+      在 prompts 中加入显式 reasoning steps 可以显著提升 agent 表现：
+
+      - **更好的决策**：模型会一步步思考问题
+      - **透明度**：你可以看到模型的思考过程
+      - **更少错误**：结构化思考可以减少失误
+      - **调试**：更容易定位 reasoning 在哪里出错
+
+      ## Factor 2：掌控你的提示词
+
+      本章展示如何完全掌控 prompts：它们是一等代码。
+
+      📖 **了解更多**：[Factor 2：掌控你的提示词](../../content/zh-CN/factor-02-own-your-prompts.md)
+
+      更新 agent prompt，加入 reasoning step：
+  - fetch_file:
+      src: ./walkthrough/06-agent.baml
+      dest: baml_src/agent.baml
+  - text: |
+      现在用一个简单计算测试一下，看看 reasoning 如何工作：
+  - run_main:
+      regenerate_baml: true
+      args: can you multiply 3 and 4
+  - text: |
+      你应该会注意到，在 BAML logs 中（如果已启用），模型现在会先包含 reasoning steps，然后再决定要做什么。
+
+      ## 高级 Prompt Engineering
+
+      你可以继续增强 prompts：
+      - 为不同任务添加特定 reasoning 模板
+      - 加入优秀 reasoning 示例
+      - 用编号步骤组织 reasoning
+      - 添加常见错误检查
+
+      关键是引导模型的思考过程，同时仍然保留灵活性。
+- name: context-window
+  title: 第 7 章：自定义上下文窗口
+  text: |
+    本节会探索如何自定义 agent 的上下文窗口。
+
+    这是 [factor 3：掌控你的上下文窗口](../../content/zh-CN/factor-03-own-your-context-window.md) 的核心。
+  steps:
+  - text: |
+      ## 上下文窗口序列化
+
+      你如何格式化对话历史，会显著影响：
+      - **Token usage**：有些格式更高效
+      - **Model understanding**：清晰结构能帮助模型理解
+      - **Debugging**：可读格式有助于开发
+
+      ## Factor 3：掌控你的上下文窗口
+
+      Context engineering 非常关键，这是最重要的 factors 之一。
+
+      📖 **了解更多**：[Factor 3：掌控你的上下文窗口](../../content/zh-CN/factor-03-own-your-context-window.md)
+
+      实现两种序列化格式：pretty-printed JSON 和 XML。
+  - file:
+      src: ./walkthrough/07-agent.py
+  - text: |
+      现在创建一个可以切换格式的 main 函数：
+  - file:
+      src: ./walkthrough/07-main.py
+  - text: |
+      先用 JSON 格式测试：
+  - run_main:
+      regenerate_baml: true
+      args: can you multiply 3 and 4, then divide the result by 2
+      kwargs:
+        use_xml: false
+  - text: |
+      现在用 XML 格式运行同样的请求：
+  - run_main:
+      regenerate_baml: false
+      args: can you multiply 3 and 4, then divide the result by 2
+      kwargs:
+        use_xml: true
+  - text: |
+      ## XML 与 JSON 的权衡
+
+      **XML 优点**：
+      - 对嵌套数据来说更节省 token
+      - opening/closing tags 带来清晰层级
+      - 更适合长对话
+
+      **JSON 优点**：
+      - 大多数开发者都熟悉
+      - 易于解析和调试
+      - 是 JavaScript/Python 原生格式
+
+      根据你的具体需求和 token 约束选择即可。
+
+      ## 下一步是什么？
+
+      在剩余章节（8-12）中，我们会基于这些基础继续添加：
+      - 用于服务 agent 的 **API endpoints**
+      - 带异步操作的 **state persistence**
+      - **Human approval workflows**（Factor 8：掌控你的控制流）
+      - 通过 HumanLayer 实现的 **email-based approvals**
+      - 用于 launch/pause/resume 模式的 **webhook integration**（Factor 6）
+
+      每一步都会让我们更接近能处理真实世界复杂性的生产级 agents。
+
+      📖 **进一步阅读**：
+      - [Factor 6：启动 / 暂停 / 恢复](../../content/zh-CN/factor-06-launch-pause-resume.md)
+      - [Factor 8：掌控你的控制流](../../content/zh-CN/factor-08-own-your-control-flow.md)
+      - [Factor 9：压缩错误](../../content/zh-CN/factor-09-compact-errors.md)
+      - [Factor 10：小而专注的 agents](../../content/zh-CN/factor-10-small-focused-agents.md)
+      - [Factor 11：从任何地方触发](../../content/zh-CN/factor-11-trigger-from-anywhere.md)
+locale: zh-CN
