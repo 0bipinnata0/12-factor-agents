@@ -1,5 +1,7 @@
 # 12-Factor Agents - Principles for building reliable LLM applications
 
+Languages: [English](./README.md) | [简体中文](./README.zh-CN.md)
+
 <div align="center">
 <a href="https://www.apache.org/licenses/LICENSE-2.0">
         <img src="https://img.shields.io/badge/Code-Apache%202.0-blue.svg" alt="Code License: Apache 2.0"></a>
@@ -256,5 +258,4 @@ Thanks to everyone who has contributed to 12-factor agents!
 All content and images are licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 License</a>
 
 Code is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>
-
 
