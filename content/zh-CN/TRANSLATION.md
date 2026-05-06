@@ -11,9 +11,16 @@
 - `content/factor-01-natural-language-to-tool-calls.md` 到 `content/factor-12-stateless-reducer.md`
 - `content/appendix-13-pre-fetch.md`
 
-第一阶段不翻译：
+第二阶段翻译：
 
-- `workshops/**`
+- `workshops/2025-05/walkthrough.md` 的并行译本 `workshops/2025-05/walkthrough.zh-CN.md`
+
+暂不翻译：
+
+- `workshops/**/walkthrough.yaml`
+- `workshops/**/sections/**`
+- `workshops/2025-05-17/**`
+- `workshops/2025-07-16/**`
 - `packages/**`
 - `content/factor-1-*.md` 到 `content/factor-9-*.md` 这些旧文件名跳转页
 - `img/**` 图片本体
@@ -24,6 +31,7 @@
 
 - `README.zh-CN.md`
 - `content/zh-CN/*.md`
+- `workshops/**/walkthrough.zh-CN.md`
 
 中文文件名保持英文 slug，便于和英文原文一一对应。
 
@@ -41,4 +49,7 @@
 
 中文译文由 `0bipinnata0` 翻译 / 改编。原项目声明：内容与图片遵循 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)，代码遵循 [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)。
 
-本轮翻译基准提交：`d20c728`。
+翻译基准提交：
+
+- 第一阶段核心内容：`d20c728`
+- 第二阶段 TypeScript workshop walkthrough：`b80256d`
