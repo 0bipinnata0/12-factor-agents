@@ -31,10 +31,13 @@
 
 - `workshops/2025-05-17/sections/**/README.md` 的并行译本 `README.zh-CN.md`
 
+第七阶段翻译：
+
+- `workshops/2025-05-17/walkthrough.md` 的并行译本 `workshops/2025-05-17/walkthrough.zh-CN.md`
+
 暂不翻译：
 
 - `workshops/**/walkthrough.yaml`
-- `workshops/2025-05-17/walkthrough.md`
 - `workshops/2025-07-16/**`
 - `packages/**` 下除已列出的 README 译本以外的代码、模板和辅助文档
 - `content/factor-1-*.md` 到 `content/factor-9-*.md` 这些旧文件名跳转页
@@ -75,3 +78,4 @@
 - 第四阶段 create-12-factor-agent 模板 README：`92c89a5`
 - 第五阶段 walkthroughgen README：`13e38f0`
 - 第六阶段 2025-05-17 workshop section READMEs：`c62d647`
+- 第七阶段 2025-05-17 workshop walkthrough：`ca5958c`
